@@ -56,7 +56,7 @@ function addCategory(categories) {
         console.log(data);
         card.setAttribute("data-question", data.results[0].question);
         card.setAttribute("data-answer", data.results[0].correct_answer);
-        card.setAttribute("data-value", cardPoints.getInnerHTML());
+        card.setAttribute("data-value", cardPoints.innerHTML);
       })
       .then((done) => card.addEventListener("click", flipCard));
   });
