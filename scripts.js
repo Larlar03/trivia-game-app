@@ -65,12 +65,15 @@ function addCategory(categories) {
 categories.forEach((category) => addCategory(category));
 
 function flipCard() {
-  console.log("clicked");
+  this.innerHTML = "";
+  this.style.fontSize = "15px";
   const textDisplay = document.createElement("div");
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("button-container");
   const trueButton = document.createElement("button");
   const falseButton = document.createElement("button");
+  trueButton.classList.add("true-button");
+  falseButton.classList.add("false-button");
   trueButton.innerHTML = "True";
   falseButton.innerHTML = "False";
   trueButton.addEventListener("click", getResult);
