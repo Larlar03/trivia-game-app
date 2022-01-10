@@ -34,6 +34,7 @@ function addCategory(categories) {
     const card = document.createElement("div");
     card.classList.add("card");
     column.append(card);
+
     const cardPoints = document.createElement("p");
     cardPoints.classList.add("cardPoints");
     card.append(cardPoints);
@@ -55,7 +56,7 @@ function addCategory(categories) {
         console.log(data);
         card.setAttribute("data-question", data.results[0].question);
         card.setAttribute("data-answer", data.results[0].correct_answer);
-        card.setAttribute("data-value", card.getInnerHTML());
+        card.setAttribute("data-value", cardPoints.getInnerHTML());
       })
       .then((done) => card.addEventListener("click", flipCard));
   });
@@ -66,6 +67,8 @@ categories.forEach((category) => addCategory(category));
 function flipCard() {
   console.log("clicked");
   const textDisplay = document.createElement("div");
+  const buttonContainer = document.createElement("div");
+  buttonContainer.classList.add("button-container");
   const trueButton = document.createElement("button");
   const falseButton = document.createElement("button");
   trueButton.innerHTML = "True";
@@ -82,14 +85,30 @@ function flipCard() {
 function getResult() {
   const allCards = Array.from(document.querySelectorAll(".card"));
   allCards.forEach((card) => card.addEventListener("click", flipCard));
+
   const cardOfButton = this.parentElement;
+
   if (cardOfButton.getAttribute("data-answer") === this.innerHTML) {
     score = score + parseInt(cardOfButton.getAttribute("data-value"));
     scoreDisplay.innerHTML = score;
+
     cardOfButton.classList.add("correct-answer");
-    cardOfButton.removeEventListener("click", flipCard);
+
+    setTimeout(() => {
+      while (cardOfButton.firstChild) {
+        cardOfButton.removeChild(cardOfButton.lastChild);
+      }
+      cardOfButton.innerHTML = cardOfButton.getAttribute("data-value");
+    }, 100);
   } else {
     cardOfButton.classList.add("wrong-answer");
-    cardOfButton.removeEventListener("click", flipCard);
+    setTimeout(() => {
+      while (cardOfButton.firstChild) {
+        cardOfButton.removeChild(cardOfButton.lastChild);
+      }
+      cardOfButton.innerHTML = 0;
+    }, 100);
   }
+
+  cardOfButton.removeEventListener("click", flipCard);
 }
