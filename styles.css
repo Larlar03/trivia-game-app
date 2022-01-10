@@ -57,7 +57,7 @@ h3 {
   align-items: center;
 }
 
-.cardPoints {
+.card-points {
   font-weight: 500;
   font-size: 1.5rem;
 }
@@ -98,12 +98,12 @@ button:hover {
   text-align: center;
   margin: 20px auto;
   bottom: 0;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 }
 .repo-link a {
   color: #4361ee;
   text-decoration: none;
 }
 .repo-link a:hover {
-  color: #ff5d73;
+  color: #80a1d4;
 }

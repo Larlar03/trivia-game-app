@@ -36,7 +36,7 @@ function addCategory(categories) {
     column.append(card);
 
     const cardPoints = document.createElement("p");
-    cardPoints.classList.add("cardPoints");
+    cardPoints.classList.add("card-points");
     card.append(cardPoints);
 
     if (level === "easy") {
