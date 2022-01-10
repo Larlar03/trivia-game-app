@@ -23,26 +23,32 @@ const levels = ["easy", "medium", "hard"];
 function addCategory(categories) {
   const column = document.createElement("div");
   column.classList.add("category-column");
-  column.innerHTML = categories.name;
   game.append(column);
+
+  const h3 = document.createElement("h3");
+  h3.innerHTML = categories.name;
+  column.append(h3);
 
   //For each level in the levels array, add it to the url and then get the response, then log the data from the response.
   levels.forEach((level) => {
     const card = document.createElement("div");
     card.classList.add("card");
     column.append(card);
+    const cardPoints = document.createElement("p");
+    cardPoints.classList.add("cardPoints");
+    card.append(cardPoints);
 
     if (level === "easy") {
-      card.innerHTML = 100;
+      cardPoints.innerHTML = "100 Pts";
     } else if (level === "medium") {
-      card.innerHTML = 200;
+      cardPoints.innerHTML = "200 Pts";
     } else if (level === "hard") {
-      card.innerHTML = 300;
+      cardPoints.innerHTML = "300 Pts";
     }
 
     //Fetch api data
     fetch(
-      `https://opentdb.com/api.php?amount=1&${categories.id}=12&difficulty=${level}&type=boolean`
+      `https://opentdb.com/api.php?amount=1&category=${categories.id}&difficulty=${level}&type=boolean`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -77,7 +83,6 @@ function getResult() {
   const allCards = Array.from(document.querySelectorAll(".card"));
   allCards.forEach((card) => card.addEventListener("click", flipCard));
   const cardOfButton = this.parentElement;
-
   if (cardOfButton.getAttribute("data-answer") === this.innerHTML) {
     score = score + parseInt(cardOfButton.getAttribute("data-value"));
     scoreDisplay.innerHTML = score;
