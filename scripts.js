@@ -19,26 +19,31 @@ const categories = [
 
 const levels = ["easy", "medium", "hard"];
 
-//Creates a column div and add it to the game div html.
+//Add Categories function. Creates the grid layout and calls API
 function addCategory(categories) {
+  //Creates a div with the class category-column. Adds the column to the game div.
   const column = document.createElement("div");
   column.classList.add("category-column");
   game.append(column);
 
+  //Creates h3 element and uses the names in the categories object as it's content. Adds the h3 element to the column div.
   const h3 = document.createElement("h3");
   h3.innerHTML = categories.name;
   column.append(h3);
 
-  //For each level in the levels array, add it to the url and then get the response, then log the data from the response.
+  //For each level in the levels array...
   levels.forEach((level) => {
+    //Create a div element with the class of card. Add card to the column.
     const card = document.createElement("div");
     card.classList.add("card");
     column.append(card);
 
+    //Create a paragraph element with the class of card-points. Add p element to the card div element.
     const cardPoints = document.createElement("p");
     cardPoints.classList.add("card-points");
     card.append(cardPoints);
 
+    //If the level from the array assigned to card is "..." add "..." points as the text.
     if (level === "easy") {
       cardPoints.innerHTML = "100 Pts";
     } else if (level === "medium") {
@@ -47,7 +52,9 @@ function addCategory(categories) {
       cardPoints.innerHTML = "300 Pts";
     }
 
-    //Fetch api data
+    //Fetch api data. Fetch from url, then take the response and convert it to a JavaScript object using JSON.
+    //Then take the data response and set the chosen values in the object as attributes on each card.
+    //Then add a click event to the card that calls the flipCard function.
     fetch(
       `https://opentdb.com/api.php?amount=1&category=${categories.id}&difficulty=${level}&type=boolean`
     )
@@ -56,12 +63,15 @@ function addCategory(categories) {
         console.log(data);
         card.setAttribute("data-question", data.results[0].question);
         card.setAttribute("data-answer", data.results[0].correct_answer);
+        //Below sets data-value attribute as the inner text in the card-points paragrah element. e.g 100 pts, 200 pts, 300 pts.
         card.setAttribute("data-value", cardPoints.innerHTML);
       })
       .then((done) => card.addEventListener("click", flipCard));
   });
 }
 
+//For each category in the categories array (film, music, television), call the addCategory function, passing each category object as a parameter.
+//Creates 3 columns for film, music and television, with 3 cards each for 100 pts, 200pts and 300pts.
 categories.forEach((category) => addCategory(category));
 
 function flipCard() {
