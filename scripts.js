@@ -54,7 +54,7 @@ function addCategory(categories) {
 
     //Fetch api data. Fetch from url, then take the response and convert it to a JavaScript object using JSON.
     //Then take the data response and set the chosen values in the object as attributes on each card.
-    //Then add a click event to the card that calls the flipCard function.
+    //Then add a click event to the card that calls the showQuestion function.
     fetch(
       `https://opentdb.com/api.php?amount=1&category=${categories.id}&difficulty=${level}&type=boolean`
     )
@@ -66,7 +66,7 @@ function addCategory(categories) {
         //Below sets data-value attribute as the inner text in the card-points paragrah element. e.g 100 pts, 200 pts, 300 pts.
         card.setAttribute("data-value", cardPoints.innerHTML);
       })
-      .then((done) => card.addEventListener("click", flipCard));
+      .then((done) => card.addEventListener("click", showQuestion));
   });
 }
 
@@ -74,54 +74,81 @@ function addCategory(categories) {
 //Creates 3 columns for film, music and television, with 3 cards each for 100 pts, 200pts and 300pts.
 categories.forEach((category) => addCategory(category));
 
-function flipCard() {
+//Show Question function. Creates elements inside card to display question and buttons to answers.
+//Add question from api data to each card when the cards are clicked.
+function showQuestion() {
+  //On this card make inner text blank - removes the card points text.
   this.innerHTML = "";
-  this.style.fontSize = "15px";
-  const textDisplay = document.createElement("div");
-  const buttonContainer = document.createElement("div");
-  buttonContainer.classList.add("button-container");
-  const trueButton = document.createElement("button");
-  const falseButton = document.createElement("button");
-  trueButton.classList.add("true-button");
-  falseButton.classList.add("false-button");
-  trueButton.innerHTML = "True";
-  falseButton.innerHTML = "False";
-  trueButton.addEventListener("click", getResult);
-  falseButton.addEventListener("click", getResult);
-  textDisplay.innerHTML = this.getAttribute("data-question");
-  this.append(textDisplay, trueButton, falseButton);
 
+  //Creates a div to display question text.
+  const questionText = document.createElement("div");
+
+  //Creates button with true-button class and "True" text. Repeat for false button.
+  const trueButton = document.createElement("button");
+  trueButton.classList.add("true-button");
+  trueButton.innerHTML = "True";
+  const falseButton = document.createElement("button");
+  falseButton.classList.add("false-button");
+  falseButton.innerHTML = "False";
+
+  //Adds click event to buttons that calls a showResult function.
+  trueButton.addEventListener("click", showResult);
+  falseButton.addEventListener("click", showResult);
+
+  //Changes the text in the questionText div to the data-question attribute assigned to this card. The question data from the api.
+  questionText.innerHTML = this.getAttribute("data-question");
+
+  //Adds the 3 elements to this card.
+  this.append(questionText, trueButton, falseButton);
+
+  //Selects all elements with the class "card" and creates an array with them. Assigns the array to a "allCards" variable.
+  //For each card in the allCards array, remove the click event listeners and this (showQuestion) function.
+  //Stops user from being able to click other cards before answering question on current card.
   const allCards = Array.from(document.querySelectorAll(".card"));
-  allCards.forEach((card) => card.removeEventListener("click", flipCard));
+
+  allCards.forEach((card) => card.removeEventListener("click", showQuestion));
 }
 
-function getResult() {
+//Show Result Function
+function showResult() {
+  //Adds all card divs to an array and then re-adds the event listener that was removed before you clicked the true or false button to answer the question.
+  //Now user can select a different card to play.
   const allCards = Array.from(document.querySelectorAll(".card"));
-  allCards.forEach((card) => card.addEventListener("click", flipCard));
+  allCards.forEach((card) => card.addEventListener("click", showQuestion));
 
+  //Selects the parent element of this (the card that the button is in), and adds it to a variable.
   const cardOfButton = this.parentElement;
 
+  //If value in the data-answer attribute ("True" or "False") of this card is equal to the text in this button ("True" or "False").
+  //The score variable value is now equal to it's current value + the data-value of the current card. Score + 100, 200 or 300.
+  //Add the value of the score variable to the inner text of the score display div.
   if (cardOfButton.getAttribute("data-answer") === this.innerHTML) {
     score = score + parseInt(cardOfButton.getAttribute("data-value"));
     scoreDisplay.innerHTML = score;
 
+    //Add a class of correct-answer to this card - to create different styling for the correct answers.
     cardOfButton.classList.add("correct-answer");
 
+    //After 1 second, while there is a first child element in the card, remove the last child element, repeat until there is no first child element (no child elements at all).
+    //Then changed the inner text of the card to the value in the "data-value" attribute (100 pts, 200pts or 300pts).
     setTimeout(() => {
       while (cardOfButton.firstChild) {
         cardOfButton.removeChild(cardOfButton.lastChild);
       }
       cardOfButton.innerHTML = cardOfButton.getAttribute("data-value");
-    }, 100);
+    }, 1000);
   } else {
+    //Else the answer isn't correct so add a wrong-answer class to the card to chnage the styling.
     cardOfButton.classList.add("wrong-answer");
+    //Then remove all child elements in card and change the inner text to 0, for 0 points.
     setTimeout(() => {
       while (cardOfButton.firstChild) {
         cardOfButton.removeChild(cardOfButton.lastChild);
       }
       cardOfButton.innerHTML = 0;
-    }, 100);
+    }, 1000);
   }
 
-  cardOfButton.removeEventListener("click", flipCard);
+  //Remove the click event listener that shows the question, so that the user can't click the card again.
+  cardOfButton.removeEventListener("click", showQuestion);
 }
