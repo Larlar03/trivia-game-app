@@ -151,4 +151,17 @@ function showResult() {
 
   //Remove the click event listener that shows the question, so that the user can't click the card again.
   cardOfButton.removeEventListener("click", showQuestion);
+
+  //Call Max Points Function after answering each question.
+  maxPoints();
+}
+
+//Max Points function. If user gets the maximum points (1800) a gif and message is displayed.
+function maxPoints() {
+  setTimeout(() => {
+    if (score === 1800) {
+      game.innerHTML = `<p id="max-points-message">You got every question right!</p> 
+      <img id="max-points-img" src="max-points.gif" alt="winning" />`;
+    }
+  }, 500);
 }
